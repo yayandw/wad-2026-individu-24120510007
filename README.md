@@ -133,6 +133,29 @@ Verifikasi manual yang juga dinilai:
 | Menu **Branches → Add rule** tidak ada | repo dibuat **Private** | Settings → General → Danger Zone → **Change visibility → Public** |
 | Tidak bisa merge PR sendiri | "Require approvals" sudah dinyalakan | matikan dulu malam ini (lihat bagian 0 langkah 4) |
 
+## 6. Endpoint individu — T4 Menu
+
+Entitas `menu` (NIM 24120510007). Kode di `backend/app/` (`schemas.py`, `routes.py`), tes di
+`backend/tests/`. Data disimpan sementara di memori.
+
+| Method | Path | Hasil |
+|---|---|---|
+| POST | `/api/menu` | `201 Created` + header `Location: /api/menu/{id}`; `422` bila invalid; `409` bila SKU sudah ada |
+| GET | `/api/menu?skip=0&limit=10&search=kopi` | `200 OK`, daftar menu (`search` mencari di nama/SKU) |
+| GET | `/api/menu/{id}` | `200 OK`, atau `404` bila id tidak ada |
+
+Validasi input: `sku` pola `KOPI-000` (`^KOPI-\d{3}$`), `kategori` salah satu dari
+`kopi` / `non-kopi` / `makanan`, `nama` wajib, `harga` > 0. Input tidak memuat `id`; `id` dibuat
+server dan hanya muncul di output.
+
+```bash
+cd backend && uvicorn app.main:app --reload
+curl -i -X POST localhost:8000/api/menu -H "Content-Type: application/json" \
+  -d '{"sku":"KOPI-001","nama":"Kopi Susu","kategori":"kopi","harga":25000}'
+
+pip install pytest httpx && pytest -q     # 20 tes
+```
+
 ---
 
 ## Berkas siapa
@@ -201,7 +224,7 @@ nilainya 0.
 - Sesi 5 — GitHub Copilot, autocomplete pada model SQLAlchemy. Ditinjau dan diubah manual.
 -->
 
-- _(belum ada)_
+- Endpoint individu T4 Menu — Claude Code, menulis kode endpoint, skema, dan tes. Ditinjau dan dijalankan sendiri (`pytest`).
 
 ## Kalau kamu tersendat
 
